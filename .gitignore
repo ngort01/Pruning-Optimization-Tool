@@ -1,0 +1,19 @@
+# ignore all bin directories
+# matches "bin" in any subfolder
+bin/
+
+# ignore all files ending with ~
+*~ 
+
+# Eclipse
+.classpath
+.project
+.settings/
+
+
+# Mac
+.DS_Store
+
+# Maven
+log/
+target/
