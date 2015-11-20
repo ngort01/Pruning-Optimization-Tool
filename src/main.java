@@ -7,7 +7,7 @@ public class main {
 		// TODO Auto-generated method stub
 		reader = new FileReader();
 		ParsedInput input = reader.readFile("C:/Users/Niko/Desktop/example1.txt");
-		input.toString();
+		input.print();
 	}
 
 }

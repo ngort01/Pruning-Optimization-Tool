@@ -27,16 +27,20 @@ public class FileReader {
 				String line = sc.nextLine();
 
 				// case: objects
-				if (this.isObject && line.matches(".*\\s.*")) { // ".*\\s.*" = two strings seperated by whitespace
+				if (this.isObject && line.matches(".*\\s.*")) { // ".*\\s.*" = two strings separated by whitespace
 					String[] object = line.split("\\s");
 					if (object[1].equalsIgnoreCase("point")) {
 						this.input.addPoint(object[0]);
+					} else if (object[1].equalsIgnoreCase("line")) {
+						this.input.addLine(object[0]);
 					} else if (object[1].equalsIgnoreCase("circle")) {
 						this.input.addCircle(object[0]);
 					}
 					// case: relations
 				} else if (this.isRelation && !line.matches("^$")) { // "^$" = empty string
-					this.input.addRelation(line);
+					String[] object = line.split("\\(");
+					object[1] = object[1].replaceAll("\\)", "");
+					this.input.addRelation(object);
 				}
 
 				// check for objects or relations
