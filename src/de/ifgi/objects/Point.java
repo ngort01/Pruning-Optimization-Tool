@@ -1,16 +1,17 @@
-public class Circle extends Geometry{
+package de.ifgi.objects;
+
+public class Point extends Geometry{
 	
-	private int x, y, r;
+	private int x, y;
 	
-	public Circle(String name) {
+	public Point(String name) {
 		super(name);
 	}
 	
-	public Circle (String name, int x, int y, int r) {
+	public Point (String name, int x, int y) {
 		super(name);
 		this.x = x;
 		this.y = y;
-		this.r = r;
 	}
 	
 	public void setX(int x) {
@@ -27,13 +28,5 @@ public class Circle extends Geometry{
 	
 	public int getY() {
 		return this.y;
-	}
-	
-	public void setR(int r) {
-		this.r = r;
-	}
-	
-	public int getR() {
-		return this.r;
 	}
 }

@@ -1,3 +1,4 @@
+package de.ifgi.importer;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
@@ -12,6 +13,7 @@ public class FileReader {
 	private ParsedInput input;
 	private boolean isObject = false;
 	private boolean isRelation = false;
+	private boolean isTest = false;
 
 	public FileReader() {
 		this.input = new ParsedInput();
@@ -27,29 +29,39 @@ public class FileReader {
 				String line = sc.nextLine();
 
 				// case: objects
-				if (this.isObject && line.matches(".*\\s.*")) { // ".*\\s.*" = two strings separated by whitespace
+				if (isObject && line.matches(".*\\s.*")) { // ".*\\s.*" = two strings separated by whitespace
 					String[] object = line.split("\\s");
 					if (object[1].equalsIgnoreCase("point")) {
-						this.input.addPoint(object[0]);
+						input.addPoint(object[0]);
 					} else if (object[1].equalsIgnoreCase("line")) {
-						this.input.addLine(object[0]);
+						input.addLine(object[0]);
 					} else if (object[1].equalsIgnoreCase("circle")) {
-						this.input.addCircle(object[0]);
+						input.addCircle(object[0]);
 					}
 					// case: relations
-				} else if (this.isRelation && !line.matches("^$")) { // "^$" = empty string
+				} else if (isRelation && line.matches(".*\\(.*")) { // "^$" = empty string
+					System.out.println(line);
 					String[] object = line.split("\\(");
 					object[1] = object[1].replaceAll("\\)", "");
-					this.input.addRelation(object);
+					input.addRelation(object);
+				} else if (isTest && line.matches(".*\\(.*")) {
+					String[] object = line.split("\\(");
+					input.addTest(object[0]);
 				}
 
 				// check for objects or relations
 				if (line.contains("#Objects")) {
-					this.isObject = true;
-					this.isRelation = false;
+					isObject = true;
+					isRelation = false;
+					isTest = false;
 				} else if (line.contains("#Relations")) {
-					this.isObject = false;
-					this.isRelation = true;
+					isObject = false;
+					isRelation = true;
+					isTest = false;
+				} else if (line.contains("#Tests")) {
+					isObject = false;
+					isRelation = false;
+					isTest = true;
 				}
 
 			}

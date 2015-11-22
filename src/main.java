@@ -1,13 +1,15 @@
+import de.ifgi.importer.FileReader;
+import de.ifgi.importer.ParsedInput;
+import de.ifgi.optimizer.Optimizer;
 
 public class main {
-	
-	private static FileReader reader = new FileReader();
 
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-		reader = new FileReader();
+		FileReader reader = new FileReader();
+		Optimizer optimizer = new Optimizer();
 		ParsedInput input = reader.readFile("C:/Users/Niko/Desktop/example1.txt");
 		input.print();
+		optimizer.optimize(input);
 	}
 
 }

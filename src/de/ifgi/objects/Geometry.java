@@ -1,3 +1,4 @@
+package de.ifgi.objects;
 
 public abstract class Geometry {
 	private String name;
