@@ -40,7 +40,6 @@ public class FileReader {
 					}
 					// case: relations
 				} else if (isRelation && line.matches(".*\\(.*")) { // "^$" = empty string
-					System.out.println(line);
 					String[] object = line.split("\\(");
 					object[1] = object[1].replaceAll("\\)", "");
 					input.addRelation(object);

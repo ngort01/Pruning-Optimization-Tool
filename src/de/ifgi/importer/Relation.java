@@ -5,12 +5,12 @@ public class Relation<Geometry> extends DefaultEdge {
 	private static final long serialVersionUID = -7975181062553556033L;
 	private Geometry v1;
     private Geometry v2;
-    private String relation;
+    private String type;
 
-    public Relation(Geometry v1, Geometry v2, String relation) {
+    public Relation(Geometry v1, Geometry v2, String type) {
         this.v1 = v1;
         this.v2 = v2;
-        this.relation = relation;
+        this.type = type;
     }
 
     public Geometry getV1() {
@@ -21,7 +21,7 @@ public class Relation<Geometry> extends DefaultEdge {
         return v2;
     }
 
-    public String toString() {
-        return relation;
+    public String getType() {
+        return type;
     }
 }	

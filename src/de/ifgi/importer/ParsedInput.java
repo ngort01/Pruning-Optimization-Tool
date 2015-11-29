@@ -17,13 +17,13 @@ import de.ifgi.objects.Point;
  */
 public class ParsedInput {
 	
-	private HashMap<String, Geometry> objects;
+	private HashMap<String, Geometry> objects; // all objects
 	private HashMap<String, Point> points;
 	private HashMap<String, Point> lines;
 	private HashMap<String, Circle> circles;
 	private ArrayList<String> relations;
 	private ArrayList<String> tests;
-	private UndirectedGraph<Geometry, Relation> g;
+	private UndirectedGraph<Geometry, Relation> g; // graph representation
 
 
 	public ParsedInput() {
@@ -35,6 +35,14 @@ public class ParsedInput {
 		this.tests = new ArrayList<String>();
 		this.g = new SimpleGraph<Geometry, Relation>(new ClassBasedEdgeFactory<Geometry, Relation>(Relation.class));
 
+	}
+	
+	public HashMap<String, Geometry> getObjects() {
+		return this.objects;
+	}
+	
+	public UndirectedGraph<Geometry, Relation> getG() {
+		return g;
 	}
 
 	public void addPoint(String name) {
@@ -78,6 +86,10 @@ public class ParsedInput {
 		Geometry v2 = objects.get(vertices[1]);
 		relations.add(rel);
 		g.addEdge(v1, v2, new Relation<Geometry>(v1, v2, rel));
+		if (rel.contains("centre")) {
+			v1.equivalenceRels += 1;
+			v2.equivalenceRels += 1;
+		}
 	}
 
 	public void removeRelation(String[] relation) {
@@ -124,12 +136,6 @@ public class ParsedInput {
 		System.out.println(relations.toString());
 		System.out.println(tests.toString());
 		System.out.println(g);
-		g.edgeSet().iterator().forEachRemaining(e -> {
-			Geometry p = (Geometry) e.getV1();
-
-			System.out.println(p.getName());
-			//System.out.println(e.toString());
-		});
 	}
 
 }
