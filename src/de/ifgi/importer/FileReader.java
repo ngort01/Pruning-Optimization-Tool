@@ -20,7 +20,6 @@ public class FileReader {
 	}
 
 	public ParsedInput readFile(String filePath) {
-		System.out.println(filePath);
 		File file = new File(filePath);
 
 		try {
@@ -40,27 +39,19 @@ public class FileReader {
 					}
 					// case: relations
 				} else if (isRelation && line.matches(".*\\(.*")) { // "^$" = empty string
+					line = line.replaceAll("\\s","");
 					String[] object = line.split("\\(");
 					object[1] = object[1].replaceAll("\\)", "");
 					input.addRelation(object);
-				} else if (isTest && line.matches(".*\\(.*")) {
-					String[] object = line.split("\\(");
-					input.addTest(object[0]);
-				}
+				} 
 
 				// check for objects or relations
 				if (line.contains("#Objects")) {
 					isObject = true;
 					isRelation = false;
-					isTest = false;
 				} else if (line.contains("#Relations")) {
 					isObject = false;
 					isRelation = true;
-					isTest = false;
-				} else if (line.contains("#Tests")) {
-					isObject = false;
-					isRelation = false;
-					isTest = true;
 				}
 
 			}

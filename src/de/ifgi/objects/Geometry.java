@@ -3,8 +3,8 @@ package de.ifgi.objects;
 public abstract class Geometry implements Comparable<Geometry> {
 	private String name;
 	private boolean grounded = false;
-	// number of equivalence relations, e.g. center
-	public int equivalenceRels = 0;
+	// shows how likely it is that this object will be chosen for grounding
+	public int score = 0;
 
 	public Geometry(String name) {
 		this.name = name;
@@ -24,9 +24,9 @@ public abstract class Geometry implements Comparable<Geometry> {
 
 	@Override
 	public int compareTo(Geometry g) {
-		if (this.equivalenceRels > g.equivalenceRels) {
+		if (this.score > g.score) {
 			return -1;
-		} else if(this.equivalenceRels < g.equivalenceRels) {
+		} else if(this.score < g.score) {
 			return 1;
 		} else {
 			return 0;

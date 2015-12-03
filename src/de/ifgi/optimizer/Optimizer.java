@@ -5,8 +5,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
-
-import org.jgrapht.UndirectedGraph;
+import org.jgrapht.graph.SimpleWeightedGraph;
 
 import de.ifgi.importer.ParsedInput;
 import de.ifgi.importer.Relation;
@@ -41,7 +40,7 @@ public class Optimizer {
 		Set<String> objectTransforms = new HashSet<String>();
 		// available transformations regarding relations
 		Set<String> relationTransforms = new HashSet<String>();
-		UndirectedGraph<Geometry, Relation> g = input.getG();
+		SimpleWeightedGraph<Geometry, Relation> g = input.getG();
 		// vertices array sorted by num of equivalence rels
 		Geometry[] vertices = new Geometry[g.vertexSet().size()];
 		g.vertexSet().toArray(vertices);
@@ -76,7 +75,7 @@ public class Optimizer {
 			if (chosenObjects.size() > 1) break;
 			
 			if (i == 0) {
-				// add vertex with most equivalence relations
+				// add vertex with highest score
 				chosenObjects.add(v);
 			} else {
 				int size = chosenObjects.size();
@@ -120,7 +119,6 @@ public class Optimizer {
 				g2.print();
 				printed.add(g2);
 			}
-
 		});
 	}
 	
