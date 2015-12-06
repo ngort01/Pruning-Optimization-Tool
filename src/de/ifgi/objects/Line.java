@@ -1,10 +1,18 @@
 package de.ifgi.objects;
 
 public class Line extends Geometry {
+	private Point s, e;
 
 	public Line(String name) {
 		super(name);
 		// TODO Auto-generated constructor stub
+	}
+	
+	public Line (String name, Point s, Point e) {
+		super(name);
+		this.s = s;
+		this.e = e;
+		this.ground();
 	}
 
 	@Override

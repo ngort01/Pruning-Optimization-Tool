@@ -7,9 +7,9 @@ public class main {
 	public static void main(String[] args) {
 		FileReader reader = new FileReader();
 		Optimizer optimizer = new Optimizer();
-		ParsedInput input = reader.readFile("C:/Users/Niko/Desktop/graph_decomposition_example_1.txt");
+		ParsedInput input = reader.readFile("C:/Users/Niko/Desktop/graph_decomposition_example_3.txt");
 		input.calcScores();
-		input.print();
+		//input.print();
 		optimizer.optimize(input);
 	}
 

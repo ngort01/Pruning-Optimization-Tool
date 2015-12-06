@@ -91,7 +91,7 @@ public class ParsedInput {
 		relations.add(rel);
 		Relation<Geometry> edge = new Relation<Geometry>(v1, v2, rel);
 		g.addEdge(v1, v2, edge);
-		if (rel.contentEquals("centre") | rel.contentEquals("center") | rel.contentEquals("equal")) {
+		if (rel.contentEquals("centre") | rel.contentEquals("equal")) {
 			g.setEdgeWeight(edge, 2.0);
 		} else if (rel.contentEquals("ec")) {
 			g.setEdgeWeight(edge, 3.0);

@@ -5,7 +5,10 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
+
+import org.jgrapht.alg.ConnectivityInspector;
 import org.jgrapht.graph.SimpleWeightedGraph;
+import org.jgrapht.graph.Subgraph;
 
 import de.ifgi.importer.ParsedInput;
 import de.ifgi.importer.Relation;
@@ -41,12 +44,7 @@ public class Optimizer {
 		// available transformations regarding relations
 		Set<String> relationTransforms = new HashSet<String>();
 		SimpleWeightedGraph<Geometry, Relation> g = input.getG();
-		// vertices array sorted by num of equivalence rels
-		Geometry[] vertices = new Geometry[g.vertexSet().size()];
-		g.vertexSet().toArray(vertices);
-		Arrays.sort(vertices);
-		// points chosen for grounding
-		ArrayList<Geometry> chosenObjects = new ArrayList<Geometry>();
+		ConnectivityInspector<Geometry, Relation> inspector = new ConnectivityInspector<Geometry, Relation>(g);
 		// grounded points that were already printed (to prevent doubled output)
 		ArrayList<Geometry> printed = new ArrayList<Geometry>();
 
@@ -68,33 +66,19 @@ public class Optimizer {
 		// intersect, result is in objectTransforms
 		// all transformations available for trading
 		objectTransforms.retainAll(relationTransforms);
-		
-		// choose points for grounding depending on the number of centre relations
-		for (int i = 0; i < vertices.length; i++) {
-			Geometry v = vertices[i];
-			if (chosenObjects.size() > 1) break;
-			
-			if (i == 0) {
-				// add vertex with highest score
-				chosenObjects.add(v);
-			} else {
-				int size = chosenObjects.size();
-				for (int j = 0; j < size; j++) {
-					if (!g.containsEdge(chosenObjects.get(j), v)) {
-						chosenObjects.add(v);
-						 break;
-					} else {
-						if(!g.getEdge(chosenObjects.get(j), v).getType().contains("centre"))  chosenObjects.add(v);
-					}
-				}
-				
-			}
-			
-		}
+		int[] xRange = {-2, -1};
+		inspector.connectedSets().forEach(set -> {
+			xRange[0] += 2;
+			xRange[1] += 2;
+			Subgraph subGraph = new Subgraph(g, set);
+			// choose points for grounding depending on vertex score and relation type
+			ArrayList<Geometry> chosenObjects = chooseObjects(g, subGraph);
+			// apply case F
+			caseF(chosenObjects, xRange[0], xRange[1]);
+		});
 
-		// apply case	
-		caseF(chosenObjects);
 		
+		// Output
 		System.out.println("## OUTPUT");
 		g.edgeSet().iterator().forEachRemaining(e -> {
 			Geometry g1 = (Geometry) e.getV1();
@@ -122,12 +106,56 @@ public class Optimizer {
 		});
 	}
 	
-	private void caseF(ArrayList<Geometry> chosenObjects) {
+	/**
+	 * Choose points for grounding depending on the node score and relations
+	 * @param vertices
+	 * @param chosenObjects
+	 * @param g
+	 */
+	private ArrayList<Geometry> chooseObjects(SimpleWeightedGraph<Geometry, Relation> g, Subgraph subGraph) {
+		ArrayList<Geometry> chosenObjects = new ArrayList<Geometry>();
+		// vertices array sorted by node score
+		Geometry[] vertexSet = new Geometry[subGraph.vertexSet().size()];
+		subGraph.vertexSet().toArray(vertexSet);
+		Arrays.sort(vertexSet);
+
+		
+		for (int i = 0; i < vertexSet.length; i++) {
+			Geometry v = vertexSet[i];
+			if (chosenObjects.size() > 1) break;
+			
+			if (i == 0) {
+				// add vertex with highest score
+				chosenObjects.add(v);
+			} else {
+				int size = chosenObjects.size();
+				for (int j = 0; j < size; j++) {
+					if (!g.containsEdge(chosenObjects.get(j), v)) {
+						chosenObjects.add(v);
+						 break;
+					} else {
+						String type = g.getEdge(chosenObjects.get(j), v).getType();
+						if(!type.equalsIgnoreCase("centre") && !type.equalsIgnoreCase("equal"))  chosenObjects.add(v);
+					}
+				}
+				
+			}
+			
+		}
+		
+		return chosenObjects;
+	}
+	
+	/**
+	 * Grounds two objects
+	 * @param chosenObjects
+	 */
+	private void caseF(ArrayList<Geometry> chosenObjects, int minX, int maxX) {
 		Geometry g1 = chosenObjects.get(0);
 		Geometry g2 = chosenObjects.get(1);
-		g1.setX(0);
+		g1.setX(minX);
 		g1.setY(0);
-		g2.setX(1);
+		g2.setX(maxX);
 		g2.setY(0);
 	}
 
