@@ -15,62 +15,29 @@ import de.ifgi.importer.Relation;
 import de.ifgi.objects.Geometry;
 
 public class Optimizer {
-	// object types preserved under various affine transformations
-	private HashMap<String, String[]> objectTypes;
-	// Qualitative spatial relations preserved under various affine
-	// transformations
-	private HashMap<String, String[]> spatialRelations;
 
 	public Optimizer() {
-		objectTypes = new HashMap<String, String[]>();
-		spatialRelations = new HashMap<String, String[]>();
-		// point, line, ellipse, convex polygon
-		this.objectTypes.put("1", new String[] { "translate", "rotate", "scale", "reflect" });
-		// circle, square, rectangle
-		this.objectTypes.put("2", new String[] { "translate", "rotate", "uniform scale", "reflect" });
 
-		// topology, mereology, coincidence, collinearity, line parallelism,
-		// packing size
-		this.spatialRelations.put("1", new String[] { "translate", "rotate", "scale", "reflect" });
-		// distance, length, line perpendicularity
-		this.spatialRelations.put("2", new String[] { "translate", "rotate", "uniform scale", "reflect" });
-		// relative orientation
-		this.spatialRelations.put("3", new String[] { "translate", "rotate", "scale" });
 	}
 
 	public void optimize(ParsedInput input) {
-		// available transformations regarding objects
-		Set<String> objectTransforms = new HashSet<String>();
-		// available transformations regarding relations
-		Set<String> relationTransforms = new HashSet<String>();
 		SimpleWeightedGraph<Geometry, Relation> g = input.getG();
 		ConnectivityInspector<Geometry, Relation> inspector = new ConnectivityInspector<Geometry, Relation>(g);
 		// grounded points that were already printed (to prevent doubled output)
 		ArrayList<Geometry> printed = new ArrayList<Geometry>();
-
-		// Find tradable transformations
-		if (input.hasCircles()) {
-			objectTransforms.addAll(Arrays.asList(objectTypes.get("2")));
-		} else {
-			objectTransforms.addAll(Arrays.asList(objectTypes.get("1")));
-		}
-
-		if (input.hasTypeThreeRelations()) {
-			relationTransforms.addAll(Arrays.asList(spatialRelations.get("3")));
-		} else if (input.hasTypeTwoRelations()) {
-			relationTransforms.addAll(Arrays.asList(spatialRelations.get("2")));
-		} else {
-			relationTransforms.addAll(Arrays.asList(spatialRelations.get("1")));
-		}
 		
-		// intersect, result is in objectTransforms
-		// all transformations available for trading
-		objectTransforms.retainAll(relationTransforms);
+		// cut dc and ntpp relations before graph decomposition
+		g.edgeSet().iterator().forEachRemaining(e -> {
+				if (e.getType().equalsIgnoreCase("dc") | e.getType().equalsIgnoreCase("ntpp")) g.removeEdge(e);
+			}
+		);
+		
 		int[] xRange = {-2, -1};
 		inspector.connectedSets().forEach(set -> {
 			xRange[0] += 2;
 			xRange[1] += 2;
 			Subgraph subGraph = new Subgraph(g, set);
+			System.out.println(subGraph);
 			// choose points for grounding depending on vertex score and relation type
 			ArrayList<Geometry> chosenObjects = chooseObjects(g, subGraph);
 			// apply case F
@@ -85,7 +52,8 @@ public class Optimizer {
 			Geometry g2 = (Geometry) e.getV2();
 			// if there is a centre relation between two objects 
 			// and one is grounded, ground the other one 
-			if (e.getType().contains("centre")) {
+			String type = e.getType();
+			if (type.contentEquals("centre") | type.contentEquals("equal")) {
 				if (g1.isGrounded()) {
 					g2.setX(g1.getX());
 					g2.setY(g1.getY());

@@ -22,7 +22,6 @@ public class ParsedInput {
 	private HashMap<String, Line> lines;
 	private HashMap<String, Circle> circles;
 	private ArrayList<String> relations;
-	private ArrayList<String> tests;
 	private SimpleWeightedGraph<Geometry, Relation> g; // graph representation
 
 
