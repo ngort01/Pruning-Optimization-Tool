@@ -3,6 +3,9 @@ Pruning-Optimization-Tool
 
 Reads a text file containing a qualitative description of spatial obects and their relations. Based on rules regarding the relations between the objects and graph analysis the optimal objects for grounding are choosen. Variables of these objects are replaced with constant values.
 
+## Usage
+```java -jar opt-tool inputFile.txt outputFile.txt```
+
 ## Spatial Ontology
 Following objects and relations can be used in the input file.
 
