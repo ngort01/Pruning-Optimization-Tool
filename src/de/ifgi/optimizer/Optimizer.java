@@ -43,49 +43,51 @@ public class Optimizer {
 			xRange[0] += 2;
 			xRange[1] += 2;
 			Subgraph subGraph = new Subgraph(g, set);
-			System.out.println(subGraph);
 			// choose points for grounding depending on vertex score and
 			// relation type
 			ArrayList<Geometry> chosenObjects = chooseObjects(g, subGraph);
+			System.out.println(chosenObjects.get(0).getName() +" "+chosenObjects.get(1).getName());
 			// apply case F
 			caseF(chosenObjects, xRange[0], xRange[1]);
 		});
 
 		// Output
 		List<String> lines = new ArrayList<String>();
-		lines.add("## OUTPUT");
-		System.out.println("## OUTPUT");
+		lines.add("SUBCASE 1");
+		System.out.println("SUBCASE 1");
 		g.edgeSet().iterator().forEachRemaining(e -> {
 			Geometry g1 = (Geometry) e.getV1();
 			Geometry g2 = (Geometry) e.getV2();
 			// if there is a centre relation between two objects
 			// and one is grounded, ground the other one
-			String type = e.getType();
-			if (type.contentEquals("centre") | type.contentEquals("equal")) {
-				if (g1.isGrounded()) {
-					g2.setX(g1.getX());
-					g2.setY(g1.getY());
-				} else if (g2.isGrounded()) {
-					g1.setX(g2.getX());
-					g1.setY(g2.getY());
+			if (!g1.getClass().getName().contains("Line") & !g2.getClass().getName().contains("Line")) {
+				String type = e.getType();
+				if (type.contentEquals("centre") | type.contentEquals("equal")) {
+					if (g1.isGrounded()) {
+						g2.setX(g1.getX());
+						g2.setY(g1.getY());
+					} else if (g2.isGrounded()) {
+						g1.setX(g2.getX());
+						g1.setY(g2.getY());
+					}
 				}
-			}
 
-			if (!printed.contains(g1)) {
-				g1.print();
-				if (g1.isGrounded()) {
-					lines.add(g1.getName() + "x = " + g1.getX());
-					lines.add(g1.getName() + "x = " + g1.getY());
+				if (!printed.contains(g1)) {
+					g1.print();
+					printed.add(g1);
+					if (g1.isGrounded()) {
+						lines.add(g1.getName() + " x " + g1.getX());
+						lines.add(g1.getName() + " y " + g1.getY());
+					}
 				}
-				printed.add(g1);
-			}
-			if (!printed.contains(g2)) {
-				g2.print();
-				if (g1.isGrounded()) {
-					lines.add(g2.getName() + "x = " + g2.getX());
-					lines.add(g2.getName() + "x = " + g2.getY());
+				if (!printed.contains(g2)) {
+					g2.print();
+					printed.add(g2);
+					if (g2.isGrounded()) {
+						lines.add(g2.getName() + " x " + g2.getX());
+						lines.add(g2.getName() + " y " + g2.getY());
+					}
 				}
-				printed.add(g2);
 			}
 		});
 

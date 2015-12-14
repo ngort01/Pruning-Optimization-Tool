@@ -12,7 +12,7 @@ public class Line extends Geometry {
 		super(name);
 		this.s = s;
 		this.e = e;
-		this.ground();
+		//this.ground();
 	}
 
 	@Override
