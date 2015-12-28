@@ -21,14 +21,20 @@ import de.ifgi.importer.Relation;
 import de.ifgi.objects.Geometry;
 
 public class Optimizer {
+	
+	String outputFile;
+	ParsedInput input;
+	SimpleWeightedGraph<Geometry, Relation> g;
+	ConnectivityInspector<Geometry, Relation> inspector;
 
-	public Optimizer() {
-
+	public Optimizer(ParsedInput input, String outputFile) {
+		this.input = input;
+		this.outputFile = outputFile;
+		this.g = input.getG();
+		this.inspector = new ConnectivityInspector<Geometry, Relation>(g);
 	}
 
-	public void optimize(ParsedInput input, String outputFile) throws IOException {
-		SimpleWeightedGraph<Geometry, Relation> g = input.getG();
-		ConnectivityInspector<Geometry, Relation> inspector = new ConnectivityInspector<Geometry, Relation>(g);
+	public void optimize() throws IOException {
 		// grounded points that were already printed (to prevent doubled output)
 		ArrayList<Geometry> printed = new ArrayList<Geometry>();
 
@@ -46,7 +52,8 @@ public class Optimizer {
 			// choose points for grounding depending on vertex score and
 			// relation type
 			ArrayList<Geometry> chosenObjects = chooseObjects(g, subGraph);
-			System.out.println(chosenObjects.get(0).getName() +" "+chosenObjects.get(1).getName());
+			System.out.println("Grounding: " + chosenObjects.get(0).getClass().getName() +" "+ chosenObjects.get(0).getName() 
+					+", "+ chosenObjects.get(1).getClass().getName() + " " +chosenObjects.get(1).getName());
 			// apply case F
 			caseF(chosenObjects, xRange[0], xRange[1]);
 		});
@@ -60,7 +67,7 @@ public class Optimizer {
 			Geometry g2 = (Geometry) e.getV2();
 			// if there is a centre relation between two objects
 			// and one is grounded, ground the other one
-			if (!g1.getClass().getName().contains("Line") & !g2.getClass().getName().contains("Line")) {
+			if (!g1.getClass().getName().contains("Line") && !g2.getClass().getName().contains("Line")) {
 				String type = e.getType();
 				if (type.contentEquals("centre") | type.contentEquals("equal")) {
 					if (g1.isGrounded()) {
@@ -111,25 +118,29 @@ public class Optimizer {
 
 		for (int i = 0; i < vertexSet.length; i++) {
 			Geometry v = vertexSet[i];
+			// only grounding 2 objects for now
 			if (chosenObjects.size() > 1)
 				break;
-
-			if (i == 0) {
-				// add vertex with highest score
-				chosenObjects.add(v);
-			} else {
-				int size = chosenObjects.size();
-				for (int j = 0; j < size; j++) {
-					if (!g.containsEdge(chosenObjects.get(j), v)) {
-						chosenObjects.add(v);
-						break;
-					} else {
-						String type = g.getEdge(chosenObjects.get(j), v).getType();
-						if (!type.equalsIgnoreCase("centre") && !type.equalsIgnoreCase("equal"))
+			
+			// don't ground lines for now..
+			if (!v.getClass().getName().contains("Line")) {
+				if (i == 0) {
+					// add vertex with highest score
+					chosenObjects.add(v);
+				} else {
+					int size = chosenObjects.size();
+					for (int j = 0; j < size; j++) {
+						if (!g.containsEdge(chosenObjects.get(j), v)) {
 							chosenObjects.add(v);
+							break;
+						} else {
+							String type = g.getEdge(chosenObjects.get(j), v).getType();
+							if (!type.equalsIgnoreCase("centre") && !type.equalsIgnoreCase("equal"))
+								chosenObjects.add(v);
+						}
 					}
-				}
 
+				}				
 			}
 
 		}

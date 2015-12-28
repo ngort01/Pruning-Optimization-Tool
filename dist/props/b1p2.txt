@@ -1,0 +1,52 @@
+#Objects
+
+a point
+b point
+c point
+d point
+g point
+l point
+
+lbc line
+lab line
+lad line
+lbd line
+lal line
+lbg line
+
+cb circle
+cd circle
+
+#Relations
+
+start_point(a, lab)
+end_point(b, lab)
+
+start_point(b, lbc)
+end_point(c, lbc)
+
+start_point(a, lad)
+end_point(d, lab)
+
+start_point(b, lbd)
+end_point(d, lbd)
+
+start_point(a, lal)
+end_point(l, lal)
+
+start_point(b, lbg)
+end_point(g, lbg)
+
+length_equal(lab, lad)
+length_equal(lab, lbd)
+
+collinear(l, lad)
+collinear(g, lbd)
+
+centre(b,cb)
+coincident(c,cb)
+
+centre(d,cd)
+coincident(g,cd)
+
+

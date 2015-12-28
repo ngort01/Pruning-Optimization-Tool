@@ -1,0 +1,43 @@
+#Objects
+
+p1 point
+p2 point
+p3 point
+
+c1 circle
+c2 circle
+
+l12 line
+l13 line
+l23 line
+
+#Relations
+
+start_point(p1, l12)
+end_point(p2, l12)
+
+start_point(p1, l13)
+end_point(p3, l13)
+
+start_point(p2, l23)
+end_point(p3, l23)
+
+not coincident(p1,p2)
+centre(p1,c1)
+centre(p2,c2)
+
+coincident(p1,c2)
+coincident(p2,c1)
+
+coincident(p3,c1)
+coincident(p3,c2)
+
+length_equal(l12, l13)
+length_equal(l12, l23)
+length_equal(l13, l23)
+
+
+
+
+
+
