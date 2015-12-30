@@ -2,7 +2,7 @@
 # matches "bin" in any subfolder
 bin/
 *.txt
-!dist/props
+!dist/propositions
 
 # ignore all files ending with ~
 *~ 

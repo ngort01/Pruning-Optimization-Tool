@@ -1,0 +1,36 @@
+#Objects
+
+pa point
+pb point
+pc point
+pd point
+pe point
+
+lab line
+lce line
+
+ca circle
+cb circle
+
+#Relations
+
+start_point(pa, lab)
+end_point(pb, lab)
+
+centre(pa, ca)
+centre(pb, cb)
+
+coincident(pc, ca)
+coincident(pc, cb)
+coincident(pe, ca)
+coincident(pe, cb)
+not equal(pc, pe)
+
+start_point(pc, lce)
+end_point(pe, lce)
+
+coincident(pd, lab)
+coincident(pb, lce)
+
+
+
