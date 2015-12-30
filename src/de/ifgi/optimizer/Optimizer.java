@@ -37,12 +37,13 @@ public class Optimizer {
 	public void optimize() throws IOException {
 		// grounded points that were already printed (to prevent doubled output)
 		ArrayList<Geometry> printed = new ArrayList<Geometry>();
-
+		System.out.println(g);
 		// cut dc and ntpp relations before graph decomposition
 		g.edgeSet().iterator().forEachRemaining(e -> {
 			if (e.getType().equalsIgnoreCase("dc") | e.getType().equalsIgnoreCase("ntpp"))
 				g.removeEdge(e);
 		});
+		
 
 		int[] xRange = { -2, -1 };
 		inspector.connectedSets().forEach(set -> {
