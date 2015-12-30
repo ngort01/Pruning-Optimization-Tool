@@ -39,6 +39,9 @@ Following objects and relations can be used in the input file.
 * parallel : line, line
 * perpendicular : line, line
 
+### Proposed Relations
+* not equal      : point, point 
+
 ## Example Input
 
 #####\# Objects
