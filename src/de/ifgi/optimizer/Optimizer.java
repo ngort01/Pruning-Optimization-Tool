@@ -37,6 +37,7 @@ public class Optimizer {
 	public void optimize() throws IOException {
 		// grounded points that were already printed (to prevent doubled output)
 		ArrayList<Geometry> printed = new ArrayList<Geometry>();
+		List<String> lines = new ArrayList<String>();
 		System.out.println(g);
 		// cut dc and ntpp relations before graph decomposition
 		g.edgeSet().iterator().forEachRemaining(e -> {
@@ -44,60 +45,37 @@ public class Optimizer {
 				g.removeEdge(e);
 		});
 		
+		
+		for (int i = 1; i < 3; i++) {
+			printed.clear();
+			
+			g.vertexSet().forEach(g -> {
+				g.grounded = false;
+			});
+			
+			
+			int[] xRange = i < 2 ? new int[]{ -2, -1 } : new int[]{-2, -2};
+			System.out.println(xRange[0] + " " + xRange[1]);
+			
+			inspector.connectedSets().forEach(set -> {
+				xRange[0] += 2;
+				xRange[1] += 2;
+				Subgraph subGraph = new Subgraph(g, set);
+				// choose points for grounding depending on vertex score and
+				// relation type
+				ArrayList<Geometry> chosenObjects = chooseObjects(g, subGraph);
+				System.out.println("Grounding: " + chosenObjects.get(0).getClass().getName() +" "+ chosenObjects.get(0).getName() 
+						+", "+ chosenObjects.get(1).getClass().getName() + " " +chosenObjects.get(1).getName());
+				// apply case F
+				caseF(chosenObjects, xRange[0], xRange[1]);
+			});
 
-		int[] xRange = { -2, -1 };
-		inspector.connectedSets().forEach(set -> {
-			xRange[0] += 2;
-			xRange[1] += 2;
-			Subgraph subGraph = new Subgraph(g, set);
-			// choose points for grounding depending on vertex score and
-			// relation type
-			ArrayList<Geometry> chosenObjects = chooseObjects(g, subGraph);
-			System.out.println("Grounding: " + chosenObjects.get(0).getClass().getName() +" "+ chosenObjects.get(0).getName() 
-					+", "+ chosenObjects.get(1).getClass().getName() + " " +chosenObjects.get(1).getName());
-			// apply case F
-			caseF(chosenObjects, xRange[0], xRange[1]);
-		});
+			// Output
+			lines.add("SUBCASE " + i);
+			System.out.println("SUBCASE " + i);
+			createOutput(g, lines, printed);			
+		}
 
-		// Output
-		List<String> lines = new ArrayList<String>();
-		lines.add("SUBCASE 1");
-		System.out.println("SUBCASE 1");
-		g.edgeSet().iterator().forEachRemaining(e -> {
-			Geometry g1 = (Geometry) e.getV1();
-			Geometry g2 = (Geometry) e.getV2();
-			// if there is a centre relation between two objects
-			// and one is grounded, ground the other one
-			if (!g1.getClass().getName().contains("Line") && !g2.getClass().getName().contains("Line")) {
-				String type = e.getType();
-				if (type.contentEquals("centre") | type.contentEquals("equal")) {
-					if (g1.isGrounded()) {
-						g2.setX(g1.getX());
-						g2.setY(g1.getY());
-					} else if (g2.isGrounded()) {
-						g1.setX(g2.getX());
-						g1.setY(g2.getY());
-					}
-				}
-
-				if (!printed.contains(g1)) {
-					g1.print();
-					printed.add(g1);
-					if (g1.isGrounded()) {
-						lines.add(g1.getName() + " x " + g1.getX());
-						lines.add(g1.getName() + " y " + g1.getY());
-					}
-				}
-				if (!printed.contains(g2)) {
-					g2.print();
-					printed.add(g2);
-					if (g2.isGrounded()) {
-						lines.add(g2.getName() + " x " + g2.getX());
-						lines.add(g2.getName() + " y " + g2.getY());
-					}
-				}
-			}
-		});
 
 		Path file = Paths.get(outputFile);
 		Files.write(file, lines, Charset.forName("UTF-8"));
@@ -161,6 +139,44 @@ public class Optimizer {
 		g1.setY(0);
 		g2.setX(maxX);
 		g2.setY(0);
+	}
+	
+	private void createOutput(SimpleWeightedGraph<Geometry, Relation> g, List<String> lines, ArrayList<Geometry> printed) {
+		g.edgeSet().iterator().forEachRemaining(e -> {
+			Geometry g1 = (Geometry) e.getV1();
+			Geometry g2 = (Geometry) e.getV2();
+			// if there is a centre relation between two objects
+			// and one is grounded, ground the other one
+			if (!g1.getClass().getName().contains("Line") && !g2.getClass().getName().contains("Line")) {
+				String type = e.getType();
+				if (type.contentEquals("centre") | type.contentEquals("equal")) {
+					if (g1.isGrounded()) {
+						g2.setX(g1.getX());
+						g2.setY(g1.getY());
+					} else if (g2.isGrounded()) {
+						g1.setX(g2.getX());
+						g1.setY(g2.getY());
+					}
+				}
+
+				if (!printed.contains(g1)) {
+					g1.print();
+					printed.add(g1);
+					if (g1.isGrounded()) {
+						lines.add(g1.getName() + " x " + g1.getX());
+						lines.add(g1.getName() + " y " + g1.getY());
+					}
+				}
+				if (!printed.contains(g2)) {
+					g2.print();
+					printed.add(g2);
+					if (g2.isGrounded()) {
+						lines.add(g2.getName() + " x " + g2.getX());
+						lines.add(g2.getName() + " y " + g2.getY());
+					}
+				}
+			}
+		});	
 	}
 
 }

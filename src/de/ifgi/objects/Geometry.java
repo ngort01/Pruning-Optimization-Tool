@@ -2,7 +2,7 @@ package de.ifgi.objects;
 
 public abstract class Geometry implements Comparable<Geometry> {
 	private String name;
-	private boolean grounded = false;
+	public boolean grounded = false;
 	// shows how likely it is that this object will be chosen for grounding
 	public int score = 0;
 
