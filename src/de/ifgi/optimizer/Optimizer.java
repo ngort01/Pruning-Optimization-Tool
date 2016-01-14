@@ -7,12 +7,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
-import org.jgrapht.alg.ConnectivityInspector;
 import org.jgrapht.graph.SimpleWeightedGraph;
 import org.jgrapht.graph.Subgraph;
 
@@ -22,45 +18,36 @@ import de.ifgi.objects.Geometry;
 
 public class Optimizer {
 	
-	String outputFile;
-	ParsedInput input;
-	SimpleWeightedGraph<Geometry, Relation> g;
-	ConnectivityInspector<Geometry, Relation> inspector;
+	private String outputFile;
+	private SimpleWeightedGraph<Geometry, Relation> g;
 
 	public Optimizer(ParsedInput input, String outputFile) {
-		this.input = input;
 		this.outputFile = outputFile;
 		this.g = input.getG();
-		this.inspector = new ConnectivityInspector<Geometry, Relation>(g);
 	}
 
 	public void optimize() throws IOException {
+		Decomposer d = new Decomposer(g);
+		// decompose the grpah into smaller subsets if possible
+		ArrayList<Subgraph> decomposition = d.decompose();
 		// grounded points that were already printed (to prevent doubled output)
 		ArrayList<Geometry> printed = new ArrayList<Geometry>();
-		List<String> lines = new ArrayList<String>();
-		System.out.println(g);
-		// cut dc and ntpp relations before graph decomposition
-		g.edgeSet().iterator().forEachRemaining(e -> {
-			if (e.getType().equalsIgnoreCase("dc") | e.getType().equalsIgnoreCase("ntpp"))
-				g.removeEdge(e);
-		});
-		
-		
+		// 
+		List<String> output = new ArrayList<String>();
+	
 		for (int i = 1; i < 3; i++) {
 			printed.clear();
 			
 			g.vertexSet().forEach(g -> {
 				g.grounded = false;
 			});
-			
-			
+				
 			int[] xRange = i < 2 ? new int[]{ -2, -1 } : new int[]{-2, -2};
 			System.out.println(xRange[0] + " " + xRange[1]);
 			
-			inspector.connectedSets().forEach(set -> {
+			decomposition.forEach(subGraph -> {
 				xRange[0] += 2;
 				xRange[1] += 2;
-				Subgraph subGraph = new Subgraph(g, set);
 				// choose points for grounding depending on vertex score and
 				// relation type
 				ArrayList<Geometry> chosenObjects = chooseObjects(g, subGraph);
@@ -71,14 +58,14 @@ public class Optimizer {
 			});
 
 			// Output
-			lines.add("SUBCASE " + i);
+			output.add("SUBCASE " + i);
 			System.out.println("SUBCASE " + i);
-			createOutput(g, lines, printed);			
+			createOutput(g, output, printed);			
 		}
 
 
 		Path file = Paths.get(outputFile);
-		Files.write(file, lines, Charset.forName("UTF-8"));
+		Files.write(file, output, Charset.forName("UTF-8"));
 	}
 
 	/**
@@ -141,7 +128,7 @@ public class Optimizer {
 		g2.setY(0);
 	}
 	
-	private void createOutput(SimpleWeightedGraph<Geometry, Relation> g, List<String> lines, ArrayList<Geometry> printed) {
+	private void createOutput(SimpleWeightedGraph<Geometry, Relation> g, List<String> output, ArrayList<Geometry> printed) {
 		g.edgeSet().iterator().forEachRemaining(e -> {
 			Geometry g1 = (Geometry) e.getV1();
 			Geometry g2 = (Geometry) e.getV2();
@@ -163,16 +150,16 @@ public class Optimizer {
 					g1.print();
 					printed.add(g1);
 					if (g1.isGrounded()) {
-						lines.add(g1.getName() + " x " + g1.getX());
-						lines.add(g1.getName() + " y " + g1.getY());
+						output.add(g1.getName() + " x " + g1.getX());
+						output.add(g1.getName() + " y " + g1.getY());
 					}
 				}
 				if (!printed.contains(g2)) {
 					g2.print();
 					printed.add(g2);
 					if (g2.isGrounded()) {
-						lines.add(g2.getName() + " x " + g2.getX());
-						lines.add(g2.getName() + " y " + g2.getY());
+						output.add(g2.getName() + " x " + g2.getX());
+						output.add(g2.getName() + " y " + g2.getY());
 					}
 				}
 			}

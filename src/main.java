@@ -12,11 +12,11 @@ public class main {
 	 */
 	public static void main(String[] args) throws IOException {
 		FileReader reader = new FileReader();
-		//ParsedInput input = reader.readFile("C:/Users/Niko/Desktop/propositions/b1p10.txt");
-		ParsedInput input = reader.readFile(args[0]);
+		ParsedInput input = reader.readFile("C:/Users/Niko/Desktop/propositions/b1p10.txt");
+		//ParsedInput input = reader.readFile(args[0]);
 		input.calcScores();
-		//Optimizer optimizer = new Optimizer(input, "test.txt");
-		Optimizer optimizer = new Optimizer(input, args[1]);
+		Optimizer optimizer = new Optimizer(input, "test.txt");
+		//Optimizer optimizer = new Optimizer(input, args[1]);
 		//input.print();
 		optimizer.optimize();
 	}
