@@ -1,51 +1,47 @@
 #Objects
 
-p1 point
-la line
-lb line
-pa point
-pb point
-c1 circle
-ca circle
-cb circle
-pc point
+A point
+B point 
+C point 
+D point 
+E point 
+F point 
 
-l1a line
-l1b line
-lac line
-lbc line
+LAC line 
+LAB line 
+LDF line 
+LEF line 
+
+C1 circle 
+C2 circle 
+C3 circle 
+
 
 
 #Relations
+not_equal(A, B)
+not_equal(A, C)
+not_equal(B, C)
 
-start_point(p1,la)
-start_point(p1,lb)
+centre(A, C1)
+coincident(D, C1)
+coincident(E, C1)
+coincident(D, LAB)
+coincident(E, LAC)
 
-not parallel(la, lb)
+centre(D, C2)
+centre(E, C3)
 
-centre(p1,c1)
+coincident(E, C2)
+coincident(D, C3)
 
-coincident(pa, la)
-coincident(pb, lb)
+end_points(A, C, LAC)
+end_points(A, B, LAB)
+end_points(D, F, LDF)
+end_points(E, F, LEF)
 
-coincident(pa, c1)
-coincident(pb, c1)
+coincident(F, C2)
+coincident(F, C3)
 
-centre(pa,ca)
-centre(pb,cb)
-
-coincident(p1, ca)
-coincident(p1, cb)
-
-not equal(p1,pc)
-coincident(pc, ca)
-coincident(pc, cb)
-
-end_points(l1a, p1, pa)
-end_points(l1b, p1, pb)
-end_points(lac, pa, pc)
-end_points(lbc, pb, pc)
-
-length_equal(l1a, l1b)
-length_equal(lac, lbc)
-
+not_equal(A, F)
+length_equal(LDF, LEF)

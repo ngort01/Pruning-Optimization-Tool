@@ -82,14 +82,36 @@ public class ParsedInput {
 		objects.remove(name);
 	}
 
+	/**
+	 * 
+	 * @param relation
+	 */
 	public void addRelation(String[] relation) {
+		Geometry v1 = null, v2 = null, l = null;
+		Relation<Geometry> edge = null;
 		String rel = relation[0];
-		String[] vertices = relation[1].split("\\,");
-		Geometry v1 = objects.get(vertices[0]);
-		Geometry v2 = objects.get(vertices[1]);
-		relations.add(rel);
-		Relation<Geometry> edge = new Relation<Geometry>(v1, v2, rel);
-		g.addEdge(v1, v2, edge);
+		// TODO make this nicer
+		if (rel.contentEquals("end_points")) {
+			String[] vertices = relation[1].split("\\,");
+			v1 = objects.get(vertices[0]);
+			v2 = objects.get(vertices[1]);
+			l = objects.get(vertices[2]);
+			
+			relations.add("start_point");
+			edge = new Relation<Geometry>(v1, l, "start_point");
+			g.addEdge(v1, l, edge);
+			
+			relations.add("end_point");
+			edge = new Relation<Geometry>(v2, l, "end_point");
+			g.addEdge(v2, l, edge);
+		} else {
+			String[] vertices = relation[1].split("\\,");
+			v1 = objects.get(vertices[0]);
+			v2 = objects.get(vertices[1]);
+			relations.add(rel);
+			edge = new Relation<Geometry>(v1, v2, rel);
+			g.addEdge(v1, v2, edge);
+		}
 		if (rel.contentEquals("centre") | rel.contentEquals("equal")) {
 			g.setEdgeWeight(edge, 3.0);
 		} else if (rel.contentEquals("ec")) {
@@ -98,6 +120,7 @@ public class ParsedInput {
 			g.setEdgeWeight(edge, 1.0);
 		}
 	}
+	
 
 	public void removeRelation(String[] relation) {
 		String rel = relation[0];
