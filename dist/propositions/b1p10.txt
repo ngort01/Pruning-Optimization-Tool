@@ -7,6 +7,10 @@ pd point
 pe point
 
 lab line
+lac line
+lbc line
+lae line
+lbe line 
 lce line
 
 ca circle
@@ -14,8 +18,21 @@ cb circle
 
 #Relations
 
-start_point(pa, lab)
-end_point(pb, lab)
+end_points(pa, pb, lab)
+end_points(pa, pc, lac)
+end_points(pb, pc, lbc)
+
+end_points(pa, pe, lae)
+end_points(pb, pe, lbe)
+end_points(pc, pe, lce)
+
+length_equal(lab, lac)
+length_equal(lab, lbc)
+length_equal(lac, lbc)
+
+length_equal(lab, lae)
+length_equal(lab, lbe)
+length_equal(lae, lbe)
 
 centre(pa, ca)
 centre(pb, cb)
@@ -24,10 +41,7 @@ coincident(pc, ca)
 coincident(pc, cb)
 coincident(pe, ca)
 coincident(pe, cb)
-not equal(pc, pe)
-
-start_point(pc, lce)
-end_point(pe, lce)
+not_equal(pc, pe)
 
 coincident(pd, lab)
 coincident(pb, lce)

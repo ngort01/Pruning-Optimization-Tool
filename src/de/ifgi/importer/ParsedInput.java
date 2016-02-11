@@ -96,7 +96,7 @@ public class ParsedInput {
 			v1 = objects.get(vertices[0]);
 			v2 = objects.get(vertices[1]);
 			l = objects.get(vertices[2]);
-			
+			//System.out.println("Relation " + rel + " " + v1.getName() + " " + v2.getName() + " " + l.getName());
 			relations.add("start_point");
 			edge = new Relation<Geometry>(v1, l, "start_point");
 			g.addEdge(v1, l, edge);
@@ -108,6 +108,7 @@ public class ParsedInput {
 			String[] vertices = relation[1].split("\\,");
 			v1 = objects.get(vertices[0]);
 			v2 = objects.get(vertices[1]);
+			//System.out.println("Relation " + rel + " " + v1.getName() + " " + v2.getName() );
 			relations.add(rel);
 			edge = new Relation<Geometry>(v1, v2, rel);
 			g.addEdge(v1, v2, edge);
