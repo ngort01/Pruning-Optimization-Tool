@@ -31,7 +31,7 @@ public class Decomposer {
 		});
 		
 		inspector.connectedSets().forEach(set -> {
-			System.out.println(set.size() == g.vertexSet().size());
+			//System.out.println(set.size() == g.vertexSet().size());
 			Subgraph subGraph = new Subgraph(g, set);
 			subGraphs.add(subGraph);
 		});

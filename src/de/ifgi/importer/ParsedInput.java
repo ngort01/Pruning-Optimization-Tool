@@ -90,36 +90,90 @@ public class ParsedInput {
 		Geometry v1 = null, v2 = null, l = null;
 		Relation<Geometry> edge = null;
 		String rel = relation[0];
-		// TODO make this nicer
+		String[] vertices = relation[1].split("\\,");
+		v1 = objects.get(vertices[0]);
+		v2 = objects.get(vertices[1]);
+				
 		if (rel.contentEquals("end_points")) {
-			String[] vertices = relation[1].split("\\,");
-			v1 = objects.get(vertices[0]);
-			v2 = objects.get(vertices[1]);
 			l = objects.get(vertices[2]);
-			//System.out.println("Relation " + rel + " " + v1.getName() + " " + v2.getName() + " " + l.getName());
 			relations.add("start_point");
 			edge = new Relation<Geometry>(v1, l, "start_point");
 			g.addEdge(v1, l, edge);
+			l.setStartPoint((Point) v1);
+			g.setEdgeWeight(edge, 1.0);
 			
 			relations.add("end_point");
 			edge = new Relation<Geometry>(v2, l, "end_point");
 			g.addEdge(v2, l, edge);
-		} else {
-			String[] vertices = relation[1].split("\\,");
-			v1 = objects.get(vertices[0]);
-			v2 = objects.get(vertices[1]);
-			//System.out.println("Relation " + rel + " " + v1.getName() + " " + v2.getName() );
+			l.setEndPoint((Point) v2);
+			g.setEdgeWeight(edge, 1.0);
+		} else if (rel.contentEquals("start_point")) {
+			if (v1.getClass().getName().contains("Line")) {
+				v1.setStartPoint((Point) v2);
+			} else {
+				v2.setStartPoint((Point) v1);
+			}
 			relations.add(rel);
 			edge = new Relation<Geometry>(v1, v2, rel);
 			g.addEdge(v1, v2, edge);
-		}
-		if (rel.contentEquals("centre") | rel.contentEquals("equal")) {
+			g.setEdgeWeight(edge, 1.0);	
+		} else if (rel.contentEquals("end_point")) { 
+			if (v1.getClass().getName().contains("Line")) {
+				v1.setEndPoint((Point) v2);
+			} else {
+				v2.setEndPoint((Point) v1);
+			}
+			relations.add(rel);
+			edge = new Relation<Geometry>(v1, v2, rel);
+			g.addEdge(v1, v2, edge);
+			g.setEdgeWeight(edge, 1.0);				
+		} else if (rel.contentEquals("centre") | rel.contentEquals("center")) {
+			if (v1.getClass().getName().contains("Circle")) {
+				v1.setCentre((Point) v2);
+			} else {
+				v2.setCentre((Point) v1);
+			}
+			relations.add(rel);
+			edge = new Relation<Geometry>(v1, v2, rel);
+			g.addEdge(v1, v2, edge);
 			g.setEdgeWeight(edge, 3.0);
-		} else if (rel.contentEquals("ec")) {
-			g.setEdgeWeight(edge, 5.0);
+		} else if (rel.contentEquals("coincident")) {
+			String v1Class = v1.getClass().getName(); 
+			String v2Class = v2.getClass().getName();
+			//System.out.println("v1Class " + v1Class);
+			//System.out.println("v2Class " + v2Class);
+			// Point - Point coincidence
+			boolean PP = v1Class.contains("Point") && v2Class.contains("Point");
+			// Point - Line coincidence
+			boolean PL = (v1Class.contains("Point") && v2Class.contains("Line")) || (v1Class.contains("Line") && v2Class.contains("Point"));
+			// Point - Circle coincidence
+			boolean PC = (v1Class.contains("Point") && v2Class.contains("Circle")) || (v1Class.contains("Circle") && v2Class.contains("Point"));
+			
+			//System.out.println("coincident " + "PP " + PP + "PL " + PL + "PC " + PC);
+			
+			relations.add(rel);
+			edge = new Relation<Geometry>(v1, v2, rel);
+			g.addEdge(v1, v2, edge);
+			
+			if (PP) {
+				g.setEdgeWeight(edge, 1.0);
+			} else if (PL) {
+				g.setEdgeWeight(edge, 3.0);
+			} else {
+				g.setEdgeWeight(edge, 1.0);
+			}
+
 		} else {
+			relations.add(rel);
+			edge = new Relation<Geometry>(v1, v2, rel);
+			g.addEdge(v1, v2, edge);
 			g.setEdgeWeight(edge, 1.0);
 		}
+		
+		if (rel.contentEquals("ec")) {
+			g.setEdgeWeight(edge, 5.0);
+		} 
+		
 	}
 	
 

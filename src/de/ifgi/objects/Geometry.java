@@ -32,7 +32,10 @@ public abstract class Geometry implements Comparable<Geometry> {
 			return 0;
 		}
 	}
+	
+	public abstract void print();
 
+	// points
 	public abstract void setX(int x);
 
 	public abstract void setY(int y);
@@ -40,6 +43,22 @@ public abstract class Geometry implements Comparable<Geometry> {
 	public abstract int getX();
 
 	public abstract int getY();
+	
+	// lines
+	public abstract void setStartPoint(Point s);
 
-	public abstract void print();
+	public abstract void setEndPoint(Point e);
+
+	public abstract Point getStart();
+
+	public abstract Point getEnd();
+	
+	// circles
+	public abstract void setCentre(Point c);
+	
+	public abstract Point getCentre();
+	
+	public abstract void setRadius(double r);
+	
+	public abstract double getRadius();
 }

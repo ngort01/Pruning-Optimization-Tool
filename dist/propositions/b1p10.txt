@@ -7,11 +7,9 @@ pd point
 pe point
 
 lab line
-lac line
-lbc line
+lcd line
 lae line
-lbe line 
-lce line
+lbe line
 
 ca circle
 cb circle
@@ -19,32 +17,24 @@ cb circle
 #Relations
 
 end_points(pa, pb, lab)
-end_points(pa, pc, lac)
-end_points(pb, pc, lbc)
+not_coincident(pa, pb)
+centre(pa, ca),
+centre(pb, cb),
+coincident(pb,ca),
+coincident(pa, cb),
+coincident(pc, ca),
+coincident(pc,cb),
 
-end_points(pa, pe, lae)
-end_points(pb, pe, lbe)
-end_points(pc, pe, lce)
+coincident(pb, ca),
+coincident(pd,cb),
 
-length_equal(lab, lac)
-length_equal(lab, lbc)
-length_equal(lac, lbc)
+not_coincident(pc,pd),
 
-length_equal(lab, lae)
-length_equal(lab, lbe)
-length_equal(lae, lbe)
+coincident(pe, lab),
+end_points(pc,pd,lcd),
+coincident(pe,lcd),
+	
+end_points(pa,pe,lae),
+end_points(pb,pe,lbe),
 
-centre(pa, ca)
-centre(pb, cb)
-
-coincident(pc, ca)
-coincident(pc, cb)
-coincident(pe, ca)
-coincident(pe, cb)
-not_equal(pc, pe)
-
-coincident(pd, lab)
-coincident(pb, lce)
-
-
-
+length_equal(lae,lbe)

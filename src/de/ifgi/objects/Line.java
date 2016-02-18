@@ -16,6 +16,12 @@ public class Line extends Geometry {
 	}
 
 	@Override
+	public void print() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
 	public void setX(int x) {
 		// TODO Auto-generated method stub
 		
@@ -35,14 +41,51 @@ public class Line extends Geometry {
 
 	@Override
 	public int getY() {
+		return this.s.getY();
+	}
+
+	@Override
+	public void setStartPoint(Point s) {
+		this.s = s;	
+	}
+
+	@Override
+	public void setEndPoint(Point e) {
+		this.e = e;
+	}
+
+	@Override
+	public Point getStart() {
+		return this.s;
+	}
+
+	@Override
+	public Point getEnd() {
+		return this.e;
+	}
+
+	@Override
+	public void setCentre(Point c) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public Point getCentre() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setRadius(double r) {
+		// TODO Auto-generated method stub
+	}
+
+	@Override
+	public double getRadius() {
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
-	@Override
-	public void print() {
-		// TODO Auto-generated method stub
-		
-	}
 
 }

@@ -40,4 +40,51 @@ public class Point extends Geometry{
 		}
 	}
 
+	@Override
+	public void setStartPoint(Point s) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setEndPoint(Point e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public Point getStart() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Point getEnd() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setCentre(Point c) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public Point getCentre() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setRadius(double r) {
+		// TODO Auto-generated method stub
+	}
+
+	@Override
+	public double getRadius() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
 }
