@@ -1,39 +1,34 @@
 #Objects
 
-pa point
-pb point
-pca point
-pcb point
-pd point
-pe point
+A point
+B point
+X point
+Y point
+D point
+E point
 
-lab line
-lc line
-lad line
+LAB line
+LC line
+LAD line
+LAE line
 
-ca circle
+CA circle
 
 #Relations
 
-start_point(pa, lab)
-end_point(pb, lab)
+end_points(A,B,LAB)
+end_points(X,Y,LC)
+length_longer(LAB,LC)
 
-start_point(pca, lc)
-end_point(pcb, lc)
+end_points(A,D,LAD)
+length_equal(LAD,LC)
 
-start_point(pa, lad)
-end_point(pd, lad)
+centre(A,CA)
+coincident(D,CA)
 
-length_longer(lab, lc)
-lenght_equal(lad, lc)
+coincident(E,CA)
+coincident(E,LAB)
 
-centre(pa, ca)
-coincident(pd, ca)
-coincident(pe, ca)
-coincident(pe, lab)
-
-
-
-
-
-
+end_points(A,E,LAE)
+length_equal(LAE,LAD)
+length_equal(LAE,LC)

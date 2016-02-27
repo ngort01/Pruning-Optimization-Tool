@@ -54,6 +54,10 @@ public class ParsedInput {
 		points.remove(name);
 		objects.remove(name);
 	}
+	
+	public HashMap<String, Point> getPoints() {
+		return this.points;
+	}
 
 	public void addLine(String name) {
 		Line l = new Line(name);
@@ -66,6 +70,10 @@ public class ParsedInput {
 		g.removeVertex(objects.get(name));
 		lines.remove(name);
 		objects.remove(name);
+	}
+	
+	public HashMap<String, Line> getLines() {
+		return this.lines;
 	}
 
 	public void addCircle(String name) {
@@ -80,6 +88,10 @@ public class ParsedInput {
 		g.removeVertex(objects.get(name));
 		circles.remove(name);
 		objects.remove(name);
+	}
+	
+	public HashMap<String, Circle> getCircles() {
+		return this.circles;
 	}
 
 	/**
@@ -197,14 +209,6 @@ public class ParsedInput {
 	
 	public boolean hasCircles() {
 		return !circles.isEmpty();
-	}
-	
-	public boolean hasTypeTwoRelations() {
-		return relations.contains("perpendicular") || relations.contains("distanceEQ");
-	}
-	
-	public boolean hasTypeThreeRelations() {
-		return relations.contains("leftOF") || relations.contains("rightOF") ;
 	}
 	
 	public void calcScores() {

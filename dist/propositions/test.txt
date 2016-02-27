@@ -1,27 +1,21 @@
 #Objects
 
-A point
-B point
-C point
+c1 circle
+p1 point
+c2 circle
+p2 point
+c3 circle
+p3 point
 
-LAB line
-LAC line
-LBC line
+x point
+y point
+z point
 
 #Relations
-
-start_point(A,LAB)
-end_point(B,LAB)
-
-start_point(A, LAC)
-end_point(C,LAC)
-
-start_point(B,LBC)
-end_point(C,LBC)
-	
-length_equal(LAB, LAC)
-length_equal(LAB, LBC)
-length_equal(LBC, LAC)
-
-
+centre(x,c1)
+centre(y,c2)
+centre(z,c3)
+coincident(p1, c1)
+coincident(p2, c2)
+coincident(p3, c3)
 

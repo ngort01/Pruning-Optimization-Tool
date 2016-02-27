@@ -1,6 +1,9 @@
 package de.ifgi.optimizer;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.jgrapht.alg.ConnectivityInspector;
 import org.jgrapht.graph.SimpleWeightedGraph;
@@ -15,6 +18,9 @@ public class Decomposer {
 	private ConnectivityInspector<Geometry, Relation> inspector;
 	private ArrayList<Relation> removedEdges = new ArrayList<Relation>();
 	private ArrayList<Subgraph> subGraphs = new ArrayList<Subgraph>();
+	private static final Set<String> rels = new HashSet<String>(Arrays.asList(
+		     new String[] {"dc", "ntpp", "length_equal", "length_longer"}
+		));
 	
 	public Decomposer(SimpleWeightedGraph<Geometry, Relation> g) {
 		this.g = g;
@@ -23,12 +29,13 @@ public class Decomposer {
 	
 	
 	public ArrayList<Subgraph> decompose() {
+
 		g.edgeSet().iterator().forEachRemaining(e -> {
-			if (e.getType().equalsIgnoreCase("dc") || e.getType().equalsIgnoreCase("ntpp")) {
-				g.removeEdge(e);
+			if (rels.contains(e.getType())) {
 				removedEdges.add(e);
 			}
 		});
+		g.removeAllEdges(removedEdges);
 		
 		inspector.connectedSets().forEach(set -> {
 			//System.out.println(set.size() == g.vertexSet().size());

@@ -7,28 +7,44 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.jgrapht.graph.SimpleWeightedGraph;
 import org.jgrapht.graph.Subgraph;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
+
 import de.ifgi.importer.ParsedInput;
 import de.ifgi.importer.Relation;
 import de.ifgi.objects.Geometry;
-import de.ifgi.objects.Point;
+import de.ifgi.objects.Line;
 
 public class Optimizer {
 
 	private String outputFile;
+	private ParsedInput input;
 	private SimpleWeightedGraph<Geometry, Relation> g;
+	// grounded points that were already printed (to prevent doubled output)
+	private ArrayList<Geometry> printed = new ArrayList<Geometry>();
+	List<Set<String>> outputContainer = new ArrayList<Set<String>>();
 
 	public Optimizer(ParsedInput input, String outputFile) {
 		this.outputFile = outputFile;
+		this.input = input;
 		this.g = input.getG();
 	}
 
 	public void optimize() throws IOException {
+		System.out.println("**********************************************");
+		System.out.println("******************* Scores *******************");
+		System.out.println("**********************************************");
 		g.vertexSet().forEach(v -> {
 			System.out.println(v.getName() + " score: " + v.score);
 		});
@@ -36,54 +52,69 @@ public class Optimizer {
 		Decomposer d = new Decomposer(g);
 		// decompose the grpah into smaller subsets if possible
 		ArrayList<Subgraph> decomposition = d.decompose();
-		// grounded points that were already printed (to prevent doubled output)
-		ArrayList<Geometry> printed = new ArrayList<Geometry>();
-		//
-		List<String> output = new ArrayList<String>();
+		
+		System.out.println("**********************************************");
+		System.out.println("****************** GROUNDING *****************");
+		System.out.println("**********************************************");
+		int subIndex = 1;
+		for (Subgraph subGraph : decomposition) {
+			Set<String> subGraphOutput = new HashSet<String>();
+			// choose points for grounding depending on vertex score and
+			// relation type
+			ArrayList<Geometry> chosenObjects = chooseObjects(subGraph);
 
-		for (int i = 1; i < 3; i++) {
-			printed.clear();
-
-			g.vertexSet().forEach(g -> {
-				g.grounded = false;
+			chosenObjects.forEach(o -> {
+				System.out.println("Grounding: " + o.getClass().getName() + " " + o.getName());
 			});
 
-			int[] xRange = i < 2 ? new int[] { -2, -1 } : new int[] { -2, -2 };
-			// System.out.println(xRange[0] + " " + xRange[1]);
+			// ground objects
+			subcaseLoop: for (int i = 0; i < 2; i++) {
+				int[] xRange = i < 1 ? new int[] { 0, 1 } : new int[] { 0, 0 };
+				
+				System.out.println("**********************************************");
+				System.out.println("*********** Subgraph " + subIndex + "  " + "SUBCASE " + (i + 1) + " ************");
+				System.out.println("**********************************************");
+				subGraphOutput.add(ground(chosenObjects, xRange));
 
-			decomposition.forEach(subGraph -> {
-				xRange[0] += 2;
-				xRange[1] += 2;
-				// choose points for grounding depending on vertex score and
-				// relation type
-				ArrayList<Geometry> chosenObjects = chooseObjects(g, subGraph);
+				if (chosenObjects.get(0).getClass().getName().contains("Line")) {
+					break;
+				} else if (chosenObjects.get(0).getClass().getName().contains("Point")
+						&& chosenObjects.get(1).getClass().getName().contains("Point")) {
+					HashMap<String, Line> lines = input.getLines();
+					Geometry g1 = chosenObjects.get(0);
+					Geometry g2 = chosenObjects.get(1);
 
-				chosenObjects.forEach(o -> {
-					System.out.println("Grounding: " + o.getClass().getName() + " " + o.getName());
+					for (String key : lines.keySet()) {
+						Geometry l = lines.get(key);
+						if ((l.getStart().getName() == g1.getName() || l.getStart().getName() == g2.getName())
+								&& (l.getEnd().getName() == g1.getName() || l.getEnd().getName() == g2.getName())) {
+							break subcaseLoop;
+						}
+					}
+
+				} 				
+				printed.clear();
+				g.vertexSet().forEach(g -> {
+					g.grounded = false;
 				});
-
-				// ground objects
-				ground(chosenObjects, xRange[0], xRange[1]);
-			});
-
-			// Output
-			output.add("SUBCASE " + i);
-			System.out.println("SUBCASE " + i);
-			createOutput(g, output, printed);
+			}
+			outputContainer.add(subGraphOutput);
+			subIndex++;
 		}
+		;
 
-		Path file = Paths.get(outputFile);
-		Files.write(file, output, Charset.forName("UTF-8"));
+		printed.clear();
+		createOutput();
 	}
 
 	/**
-	 * Choose points for grounding depending on the node score and relations
+	 * Choose objects for grounding depending on the node score and relations
 	 * 
-	 * @param vertices
-	 * @param chosenObjects
-	 * @param g
+	 * @param subGraph
+	 *            current subgraph
+	 * @return
 	 */
-	private ArrayList<Geometry> chooseObjects(SimpleWeightedGraph<Geometry, Relation> g, Subgraph subGraph) {
+	private ArrayList<Geometry> chooseObjects(Subgraph subGraph) {
 		ArrayList<Geometry> chosenObjects = new ArrayList<Geometry>();
 		// vertices array sorted by node score
 		Geometry[] vertexSet = new Geometry[subGraph.vertexSet().size()];
@@ -114,17 +145,24 @@ public class Optimizer {
 	}
 
 	/**
+	 * Grounds chosen objects of the current subgraph and related objects if
+	 * possible
 	 * 
 	 * @param chosenObjects
-	 * @param minX
-	 * @param maxX
+	 * @param xRange
+	 * @return goundings as a string
 	 */
-	private void ground(ArrayList<Geometry> chosenObjects, int minX, int maxX) {
-		int[] xRange = { minX, maxX };
-		Iterator iterator = chosenObjects.iterator();
+	private String ground(ArrayList<Geometry> chosenObjects, int[] xRange) {
+		String osNewLine = System.getProperty("line.separator");
+		// string holding all the groundings for the current subgraph
+		String subOutput = "";
+
+		Iterator<Geometry> iterator = chosenObjects.iterator();
 		int i = 0;
+
+		// ground chosen objects
 		while (iterator.hasNext()) {
-			Geometry g = (Geometry) iterator.next();
+			Geometry g = iterator.next();
 			if (g.getClass().getName().contains("Point")) {
 				groundPoint(g, xRange[i]);
 			} else if (g.getClass().getName().contains("Circle")) {
@@ -134,46 +172,16 @@ public class Optimizer {
 			}
 			i += 1;
 		}
-	}
 
-	private void groundPoint(Geometry p, int x) {
-		p.setX(x);
-		p.setY(0);
-	}
-
-	private void groundCircle(Geometry c, int x) {
-		c.getCentre().setX(x);
-		c.getCentre().setY(0);
-		c.ground();
-	}
-
-	private void groundLine(Geometry l, int[] xRange) {
-		Geometry s = l.getStart();
-		Geometry e = l.getEnd();
-		s.setX(xRange[0]);
-		s.setY(0);
-		e.setX(xRange[1]);
-		e.setY(0);
-		l.ground();
-	}
-
-	/**
-	 * 
-	 * @param g
-	 * @param output
-	 * @param printed
-	 */
-	private void createOutput(SimpleWeightedGraph<Geometry, Relation> g, List<String> output,
-			ArrayList<Geometry> printed) {
-
-		g.edgeSet().iterator().forEachRemaining(e -> {
+		// (partially) ground additional objects if it`s possible by their
+		// relation
+		for (Relation e : g.edgeSet()) {
 			Geometry g1 = (Geometry) e.getV1();
 			Geometry g2 = (Geometry) e.getV2();
 
 			String g1Class = g1.getClass().getName();
 			String g2Class = g2.getClass().getName();
-			
-			// (partially) ground additional objects if it`s possible by their relation 
+
 			if (g1Class.contains("Point") && g2Class.contains("Point")) {
 				handlePP(g1, g2, e);
 			} else if (g1Class.contains("Point") && g2Class.contains("Circle")) {
@@ -200,9 +208,9 @@ public class Optimizer {
 					int x = g1.getX();
 					int y = g1.getY();
 					if (!(x == -1))
-						output.add(g1.getName() + " x " + x);
+						subOutput += g1.getName() + " x " + x + osNewLine;
 					if (!(y == -1))
-						output.add(g1.getName() + " y " + y);
+						subOutput += g1.getName() + " y " + y + osNewLine;
 					printed.add(g1);
 				}
 			}
@@ -212,14 +220,60 @@ public class Optimizer {
 					int x = g2.getX();
 					int y = g2.getY();
 					if (!(x == -1))
-						output.add(g2.getName() + " x " + g2.getX());
+						subOutput += g2.getName() + " x " + x + osNewLine;
 					if (!(y == -1))
-						output.add(g2.getName() + " y " + g2.getY());
+						subOutput += g2.getName() + " y " + y + osNewLine;
 					printed.add(g2);
 				}
 			}
+		}
+		;
+		return subOutput;
+	}
 
-		});
+	private void groundPoint(Geometry p, int x) {
+		p.setX(x);
+		p.setY(0);
+	}
+
+	private void groundCircle(Geometry c, int x) {
+		c.getCentre().setX(x);
+		c.getCentre().setY(0);
+		c.ground();
+	}
+
+	private void groundLine(Geometry l, int[] xRange) {
+		Geometry s = l.getStart();
+		Geometry e = l.getEnd();
+		s.setX(xRange[0]);
+		s.setY(0);
+		e.setX(xRange[1]);
+		e.setY(0);
+		l.ground();
+	}
+
+	/**
+	 * Creates the final output file
+	 */
+	private void createOutput() {
+		// cartesian product to get all combinations
+		Set<List<String>> combinations = Sets.cartesianProduct(outputContainer);
+		List<String> output = new ArrayList<String>();
+		int i = 1;
+		for (List<String> l : combinations) {
+			output.add("SUBCASE " + i);
+			output.addAll(l);
+			i++;
+		}
+		;
+
+		Path file = Paths.get(outputFile);
+		try {
+			Files.write(file, output, Charset.forName("UTF-8"));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	/**
