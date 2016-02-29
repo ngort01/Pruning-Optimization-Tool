@@ -52,7 +52,7 @@ public class Optimizer {
 		Decomposer d = new Decomposer(g);
 		// decompose the grpah into smaller subsets if possible
 		ArrayList<Subgraph> decomposition = d.decompose();
-		
+
 		System.out.println("**********************************************");
 		System.out.println("****************** GROUNDING *****************");
 		System.out.println("**********************************************");
@@ -70,41 +70,78 @@ public class Optimizer {
 			// ground objects
 			subcaseLoop: for (int i = 0; i < 2; i++) {
 				int[] xRange = i < 1 ? new int[] { 0, 1 } : new int[] { 0, 0 };
-				
+
 				System.out.println("**********************************************");
 				System.out.println("*********** Subgraph " + subIndex + "  " + "SUBCASE " + (i + 1) + " ************");
 				System.out.println("**********************************************");
+				
+				// output for current subgraph
 				subGraphOutput.add(ground(chosenObjects, xRange));
 
+				// subcase where a = b ignored if grounded objects are part of
+				// the same line
 				if (chosenObjects.get(0).getClass().getName().contains("Line")) {
 					break;
 				} else if (chosenObjects.get(0).getClass().getName().contains("Point")
 						&& chosenObjects.get(1).getClass().getName().contains("Point")) {
-					HashMap<String, Line> lines = input.getLines();
 					Geometry g1 = chosenObjects.get(0);
 					Geometry g2 = chosenObjects.get(1);
+					if (isLine(g1, g2, input.getLines()))
+						break subcaseLoop;
+				} else if (chosenObjects.get(0).getClass().getName().contains("Point")
+						&& chosenObjects.get(1).getClass().getName().contains("Circle")) {
+					Geometry g1 = chosenObjects.get(0);
+					Geometry g2 = chosenObjects.get(1).getCentre();
+					if (isLine(g1, g2, input.getLines()))
+						break subcaseLoop;
+				} else if (chosenObjects.get(0).getClass().getName().contains("Circle")
+						&& chosenObjects.get(1).getClass().getName().contains("Point")) {
+					Geometry g1 = chosenObjects.get(0).getCentre();
+					Geometry g2 = chosenObjects.get(1);
+					if (isLine(g1, g2, input.getLines()))
+						break subcaseLoop;
+				} else if (chosenObjects.get(0).getClass().getName().contains("Circle")
+						&& chosenObjects.get(1).getClass().getName().contains("Circle")) {
+					Geometry g1 = chosenObjects.get(0).getCentre();
+					Geometry g2 = chosenObjects.get(1).getCentre();
+					if (isLine(g1, g2, input.getLines()))
+						break subcaseLoop;
+				}
 
-					for (String key : lines.keySet()) {
-						Geometry l = lines.get(key);
-						if ((l.getStart().getName() == g1.getName() || l.getStart().getName() == g2.getName())
-								&& (l.getEnd().getName() == g1.getName() || l.getEnd().getName() == g2.getName())) {
-							break subcaseLoop;
-						}
-					}
-
-				} 				
 				printed.clear();
 				g.vertexSet().forEach(g -> {
 					g.grounded = false;
 				});
+
 			}
 			outputContainer.add(subGraphOutput);
 			subIndex++;
 		}
-		;
 
 		printed.clear();
 		createOutput();
+	}
+
+	/**
+	 * check if two points create a line
+	 * 
+	 * @param g1
+	 * @param g2
+	 * @param lines
+	 * @return
+	 */
+	private boolean isLine(Geometry g1, Geometry g2, HashMap<String, Line> lines) {
+		boolean isLine = false;
+
+		for (String key : lines.keySet()) {
+			Geometry l = lines.get(key);
+			if ((l.getStart().getName() == g1.getName() || l.getStart().getName() == g2.getName())
+					&& (l.getEnd().getName() == g1.getName() || l.getEnd().getName() == g2.getName())) {
+				isLine = true;
+			}
+
+		}
+		return isLine;
 	}
 
 	/**
