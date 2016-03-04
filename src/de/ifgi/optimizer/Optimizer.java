@@ -8,18 +8,11 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import org.jgrapht.graph.SimpleWeightedGraph;
 import org.jgrapht.graph.Subgraph;
-
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Sets;
 
 import de.ifgi.importer.ParsedInput;
 import de.ifgi.importer.Relation;
@@ -52,8 +45,11 @@ public class Optimizer {
 		});
 
 		Decomposer d = new Decomposer(g);
+		
 		// decompose the grpah into smaller subsets if possible
 		ArrayList<Subgraph> decomposition = d.decompose();
+		// edges removed to create the decompositions
+		ArrayList<Relation> removedEdges = d.getRemovedEdges();
 
 		int subIndex = 1;
 		for (Subgraph subGraph : decomposition) {
@@ -70,6 +66,16 @@ public class Optimizer {
 				objects += g.getName() + " ";
 			}
 			output.add(objects + osNewLine);
+			
+			for (Relation e : removedEdges) {
+				Geometry v1 = (Geometry)e.getV1();
+				Geometry v2 = (Geometry)e.getV2();
+				System.out.println(removedEdges.size());
+				System.out.println(subGraph.vertexSet().contains(v1) || subGraph.vertexSet().contains(v2));
+				if (subGraph.vertexSet().contains(v1) || subGraph.vertexSet().contains(v2)) {
+					output.add("DELETED " + e.getType() + " " + v1.getName() + " " + v2.getName() + osNewLine);
+				}
+			}
 			
 			System.out.println("**********************************************");
 			System.out.println("****************** GROUNDING *****************");
