@@ -70,8 +70,6 @@ public class Optimizer {
 			for (Relation e : removedEdges) {
 				Geometry v1 = (Geometry)e.getV1();
 				Geometry v2 = (Geometry)e.getV2();
-				System.out.println(removedEdges.size());
-				System.out.println(subGraph.vertexSet().contains(v1) || subGraph.vertexSet().contains(v2));
 				if (subGraph.vertexSet().contains(v1) || subGraph.vertexSet().contains(v2)) {
 					output.add("DELETED " + e.getType() + " " + v1.getName() + " " + v2.getName() + osNewLine);
 				}
