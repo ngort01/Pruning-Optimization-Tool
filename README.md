@@ -10,37 +10,43 @@ Reads a text file containing a qualitative description of spatial obects and the
 Following objects and relations can be used in the input file.
 
 ### Objects
-* point
-* line
-* circle
+point
+line
+circle
 
 ### Relations
 
-* centre     : point, circle
-* coincident : point, point
-* equal      : point, point 
+centre			: point, circle  
 
-* length_equal : line, line 
+coincident 		: point, point  
+not_coincident 	: point, point  
+coincident 		: point, line  
+not_coincident 	: point, line  
+coincident 		: point, circle  
+not_coincident 	: point, circle  
 
-* start_point : point, 
-* line end_point : point, line
 
-* end_points: line, point, point
-* coincident: point, line
+equal      		: point, point  
+not_equal      	: point, point  
+equal      		: line, line  
+not_equal      	: line, line  
+equal      		: circle, circle  
+not_equal      	: circle, circle  
 
-* length_longer : line, line
-* length_shorter : line, line
+start_point 	: point, line   
+end_point 		: point, line  
+end_points 		: line, point, point 
+ 
+collinear		: point, line  
+parallel 		: line, line  
+perpendicular 	: line, line  
 
-* radius_equal : circle, circle
-* radius_bigger : circle, circle
-* radius_smaller : circle, circle
-
-* collinear: point, line
-* parallel : line, line
-* perpendicular : line, line
-
-### Proposed Relations
-* not equal      : point, point 
+radius_equal 	: circle, circle  
+radius_bigger 	: circle, circle  
+radius_smaller 	: circle, circle  
+length_equal 	: line, line  
+length_longer 	: line, line   
+length_shorter 	: line, line   
 
 ## Example Input
 
@@ -68,7 +74,7 @@ end_point(p3, l13)
 start_point(p2, l23)  
 end_point(p3, l23)  
 
-not coincident(p1,p2)  
+not_coincident(p1,p2)  
 centre(p1,c1)  
 centre(p2,c2)  
 
