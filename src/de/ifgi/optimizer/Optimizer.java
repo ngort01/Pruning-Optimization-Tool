@@ -33,7 +33,9 @@ public class Optimizer {
 	private SimpleWeightedGraph<Geometry, Relation> g;
 	// grounded points that were already printed (to prevent doubled output)
 	private ArrayList<Geometry> printed = new ArrayList<Geometry>();
-	List<Set<String>> outputContainer = new ArrayList<Set<String>>();
+	List<String> output = new ArrayList<String>();
+	
+	private final static String osNewLine = System.lineSeparator();
 
 	public Optimizer(ParsedInput input, String outputFile) {
 		this.outputFile = outputFile;
@@ -53,16 +55,25 @@ public class Optimizer {
 		// decompose the grpah into smaller subsets if possible
 		ArrayList<Subgraph> decomposition = d.decompose();
 
-		System.out.println("**********************************************");
-		System.out.println("****************** GROUNDING *****************");
-		System.out.println("**********************************************");
 		int subIndex = 1;
 		for (Subgraph subGraph : decomposition) {
-			Set<String> subGraphOutput = new HashSet<String>();
-			// choose points for grounding depending on vertex score and
-			// relation type
+			// choose points for grounding depending on vertex score and relation type
 			ArrayList<Geometry> chosenObjects = chooseObjects(subGraph);
-
+			
+			// add current subgraph to output
+			output.add("Subgraph " + subIndex + osNewLine);
+			
+			// add subgraph objects to output
+			String objects = "OBJECTS ";
+			for (Object o : subGraph.vertexSet()) {
+				Geometry g = (Geometry) o;
+				objects += g.getName() + " ";
+			}
+			output.add(objects + osNewLine);
+			
+			System.out.println("**********************************************");
+			System.out.println("****************** GROUNDING *****************");
+			System.out.println("**********************************************");
 			chosenObjects.forEach(o -> {
 				System.out.println("Grounding: " + o.getClass().getName() + " " + o.getName());
 			});
@@ -75,8 +86,10 @@ public class Optimizer {
 				System.out.println("*********** Subgraph " + subIndex + "  " + "SUBCASE " + (i + 1) + " ************");
 				System.out.println("**********************************************");
 				
+				// add current subcase for the subgraph
+				output.add("SUBCASE " + (i + 1) + osNewLine);
 				// output for current subgraph
-				subGraphOutput.add(ground(chosenObjects, xRange));
+				output.add(ground(chosenObjects, xRange));
 
 				// subcase where a = b ignored if grounded objects are part of
 				// the same line
@@ -114,7 +127,6 @@ public class Optimizer {
 				});
 
 			}
-			outputContainer.add(subGraphOutput);
 			subIndex++;
 		}
 
@@ -293,17 +305,6 @@ public class Optimizer {
 	 * Creates the final output file
 	 */
 	private void createOutput() {
-		// cartesian product to get all combinations
-		Set<List<String>> combinations = Sets.cartesianProduct(outputContainer);
-		List<String> output = new ArrayList<String>();
-		int i = 1;
-		for (List<String> l : combinations) {
-			output.add("SUBCASE " + i);
-			output.addAll(l);
-			i++;
-		}
-		;
-
 		Path file = Paths.get(outputFile);
 		try {
 			Files.write(file, output, Charset.forName("UTF-8"));

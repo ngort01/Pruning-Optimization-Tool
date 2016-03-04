@@ -19,7 +19,7 @@ public class Decomposer {
 	private ArrayList<Relation> removedEdges = new ArrayList<Relation>();
 	private ArrayList<Subgraph> subGraphs = new ArrayList<Subgraph>();
 	private static final Set<String> rels = new HashSet<String>(Arrays.asList(
-		     new String[] {"dc", "ntpp", "length_equal", "length_longer"}
+		     new String[] {"dc", "ntpp", "length_equal", "length_longer", "length_shorter"}
 		));
 	
 	public Decomposer(SimpleWeightedGraph<Geometry, Relation> g) {
