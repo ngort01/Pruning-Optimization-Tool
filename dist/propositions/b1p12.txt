@@ -1,0 +1,43 @@
+#Objects
+
+A point
+B point
+C point
+D point
+E point
+G point
+H point
+
+LAB line
+LCH line
+LCE line
+LCG line
+
+CC circle
+
+#Relations
+
+end_points(A,B,LAB)
+not_coincident(C,LAB)
+
+left_of(C,LAB)
+right_of(D,LAB)
+
+centre(C,CC)
+coincident(D,CC)
+
+coincident(E,CC)
+coincident(G,CC)
+
+coincident(E,LAB)
+coincident(G,LAB)
+
+end_points(C,H,LCH)
+coincident(H,LAB)
+
+end_points(C,E,LCE)
+end_points(C,G,LCG)
+
+length_equal(LCE,LCG)
+
+

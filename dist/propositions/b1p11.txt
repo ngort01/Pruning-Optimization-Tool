@@ -18,6 +18,7 @@ CD circle
 CE circle
 
 #Relations
+
 end_points(A,B,LAB)
 end_points(G,F,LGF)
 coincident(C,LAB)
@@ -38,6 +39,8 @@ centre(E,CE)
 coincident(D,CE)
 coincident(F,CE)
 coincident(G,CE)
+
+not_coincident(F,G)
 
 end_points(D,F,LDF)
 end_points(E,F,LEF)

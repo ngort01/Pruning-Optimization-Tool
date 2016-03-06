@@ -13,40 +13,40 @@ lad line
 lbd line
 lal line
 lbg line
+ldg line
+ldl line
 
 cb circle
 cd circle
 
 #Relations
 
-start_point(a, lab)
-end_point(b, lab)
-
-start_point(b, lbc)
-end_point(c, lbc)
-
-start_point(a, lad)
-end_point(d, lad)
-
-start_point(b, lbd)
-end_point(d, lbd)
-
-start_point(a, lal)
-end_point(l, lal)
-
-start_point(b, lbg)
-end_point(g, lbg)
-
+end_points(a, b, lab)
+end_points(b, c, lbc)
+end_points(a, d, lad)
+end_points(b, d, lbd)
+end_points(a, l, lal)
+end_points(b, g, lbg)
+	
 length_equal(lab, lad)
 length_equal(lab, lbd)
-
-collinear(l, lad)
-collinear(g, lbd)
-
+length_equal(lad, lbd)
+	
 centre(b,cb)
 coincident(c,cb)
-
+coincident(g,cb)
 centre(d,cd)
 coincident(g,cd)
+	
+
+end_points(d, g, ldg)
+end_points(d,l,ldl)
+coincident(b, ldg)
+	
+coincident(l, cd)
+	
+coincident(a, ldl)
+	
+length_equal(lal, lbc)
 
 
