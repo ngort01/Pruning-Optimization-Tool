@@ -16,36 +16,40 @@ Following objects and relations can be used in the input file.
 
 ### Relations
 
-    centre			: point, circle  
+    centre			    : point, circle  
     
-    coincident 		: point, point  
-    not_coincident 	: point, point  
-    coincident 		: point, line  
-    not_coincident 	: point, line  
-    coincident 		: point, circle  
-    not_coincident 	: point, circle  
+    coincident 		    : point, point  
+    not_coincident 	    : point, point  
+    coincident 		    : point, line  
+    not_coincident 	    : point, line  
+    coincident 		    : point, circle  
+    not_coincident 	    : point, circle  
     
-    equal      		: point, point  
-    not_equal      	: point, point  
-    equal      		: line, line  
-    not_equal      	: line, line  
-    equal      		: circle, circle  
-    not_equal      	: circle, circle  
+    equal      		    : point, point  
+    not_equal      	    : point, point  
+    equal      		    : line, line  
+    not_equal      	    : line, line  
+    equal      		    : circle, circle  
+    not_equal      	    : circle, circle  
     
-    start_point 	: point, line   
-    end_point 		: point, line  
-    end_points 		: line, point, point 
+    start_point 	    : point, line   
+    end_point 		    : point, line  
+    end_points 		    : point, point, line
     
-    collinear		: point, line  
-    parallel 		: line, line  
-    perpendicular 	: line, line  
+    collinear		    : point, line  
+    not_collinear		: point, line  
+    parallel 		    : line, line
+    not_parallel 		: line, line  
+    perpendicular 	    : line, line  
     
-    radius_equal 	: circle, circle  
-    radius_bigger 	: circle, circle  
-    radius_smaller 	: circle, circle  
-    length_equal 	: line, line  
-    length_longer 	: line, line   
-    length_shorter 	: line, line   
+    radius_equal 	    : circle, circle  
+    radius_bigger 	    : circle, circle  
+    radius_smaller 	    : circle, circle 
+    
+    length_equal 	    : line, line
+    not_length_equal    : line, line
+    length_longer 	    : line, line   
+    length_shorter 	    : line, line   
 
 ## Example Input
 
