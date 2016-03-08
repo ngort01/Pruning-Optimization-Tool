@@ -49,7 +49,7 @@ Following objects and relations can be used in the input file.
 
 ## Example Input
 
-    \# Objects
+    # Objects
     
     p1 point  
     p2 point   
@@ -62,7 +62,7 @@ Following objects and relations can be used in the input file.
     l13 line  
     l23 line  
     
-    \# Relations
+    # Relations
     
     end_points(p1,p2, l12)  
     end_points(p1,p3, l13)  
