@@ -1,0 +1,74 @@
+#Objects
+
+AX point
+BX point
+CX point
+CY point
+D point
+E point
+F point
+G point
+H point
+K point
+
+LA line
+LB line
+LC line
+LAB line
+LAC line
+LBC line
+LDE line
+LDF line
+LFG line
+LGH line
+LFK line
+LGK line
+
+CF circle
+CG circle
+
+#Relations
+
+end_points(AX,BX,LA)
+end_points(BX,CX,LB)
+end_points(CX,CY,LC)
+end_points(AX,CX,LAB)
+end_points(AX,CY,LAC)
+end_points(BX,CX,LBC)
+
+collinear(LA,LB)
+collinear(LB,LC)
+
+length_longer(LAB, LC)
+length_longer(LAC, LB)
+length_longer(LBC, LB)
+
+end_points(D,E,LDE)
+
+coincident(F,LDE)
+coincident(G,LDE)
+coincident(H,LDE)
+
+end_points(D,F,LDF)
+end_points(F,G,LFG)
+end_points(G,H,LGH)
+
+length_equal(LDF,LA)
+length_equal(LFG,LB)
+length_equal(LGH,LC)
+
+centre(F,CF)
+coincident(D,CF)
+
+centre(G,CG)
+coincident(H,CG)
+
+coincident(K,CF)
+coincident(K,CG)
+
+end_points(F,K,LFK)
+end_points(G,K,LGK)
+
+length_equal(LFK,LA)
+length_equal(LGK,LC)
+
