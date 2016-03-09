@@ -32,7 +32,7 @@ public class ParsedInput {
 
 	public ParsedInput() {
 		try {
-			this.defaultWeights.load(ParsedInput.class.getResourceAsStream("relationWeights.properties"));
+			this.defaultWeights.load(ParsedInput.class.getResourceAsStream("defaultWeights.properties"));
 		} catch (Exception e) {
 		}
 	}
@@ -108,7 +108,8 @@ public class ParsedInput {
 		v1 = objects.get(vertices[0]);
 		v2 = objects.get(vertices[1]);
 		l = vertices.length == 3 && objects.containsKey(vertices[2]) ? objects.get(vertices[2]) : null;
-
+		
+		// handle relations
 		if (rel.contentEquals("end_points")) {
 			relations.add("start_point");
 			edge = new Relation<Geometry>(v1, l, "start_point");
@@ -177,13 +178,6 @@ public class ParsedInput {
 			edge = new Relation<Geometry>(v1, v2, rel);
 			g.addEdge(v1, v2, edge);
 		}
-		
-		// set edge weights
-		if (defaultWeights.containsKey(rel)) {
-			g.setEdgeWeight(edge, Double.parseDouble(defaultWeights.get(rel).toString()));
-		} else {
-			g.setEdgeWeight(edge, 1.0);
-		}
 
 	}
 
@@ -194,6 +188,35 @@ public class ParsedInput {
 		Geometry v2 = objects.get(vertices[1]);
 		relations.remove(rel);
 		g.removeAllEdges(v1, v2);
+	}
+	
+	/**
+	 * Calculates vertex scores
+	 * 
+	 * @param customWeights optional, user specified weights 
+	 */
+	public void calcScores(Properties customWeights) {
+		Properties mergedWeights = new Properties();
+		mergedWeights.putAll(defaultWeights);
+		mergedWeights.putAll(customWeights);
+				
+		g.edgeSet().forEach(e -> {
+			String rel = e.getType();
+			Geometry v1 = (Geometry) e.getV1();
+			Geometry v2 = (Geometry) e.getV2();
+
+			// set edge weights
+			if (mergedWeights.containsKey(rel)) {
+				Double val = Double.parseDouble(mergedWeights.get(rel).toString());
+				g.setEdgeWeight(e, val);
+			} else {
+				g.setEdgeWeight(e, 1.0);
+			}
+			
+			// calculate vertex scores
+			v1.score += g.getEdgeWeight(e);
+			v2.score += g.getEdgeWeight(e);
+		});
 	}
 
 	public boolean hasPoints() {
@@ -206,15 +229,6 @@ public class ParsedInput {
 
 	public boolean hasCircles() {
 		return !circles.isEmpty();
-	}
-
-	public void calcScores() {
-		g.edgeSet().forEach(e -> {
-			Geometry v1 = (Geometry) e.getV1();
-			Geometry v2 = (Geometry) e.getV2();
-			v1.score += g.getEdgeWeight(e);
-			v2.score += g.getEdgeWeight(e);
-		});
 	}
 
 	public void print() {

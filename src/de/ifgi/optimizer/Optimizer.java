@@ -327,7 +327,7 @@ public class Optimizer {
 	 */
 	private void handlePP(Geometry a, Geometry b, Relation e) {
 		String type = e.getType();
-		if (type.contentEquals("coincident") || type.contentEquals("equal")) {
+		if (type.contentEquals("coincidentPP") || type.contentEquals("equal")) {
 			if (a.isGrounded()) {
 				b.setX(a.getX());
 				b.setY(a.getY());
@@ -367,7 +367,7 @@ public class Optimizer {
 	 */
 	private void handlePL(Geometry a, Geometry b, Relation e) {
 		String type = e.getType();
-		if (type.contentEquals("coincident") || type.contentEquals("collinear")) {
+		if (type.contentEquals("coincidentPL") || type.contentEquals("collinear")) {
 			if (b.isGrounded()) {
 				a.setY(b.getY());
 			}

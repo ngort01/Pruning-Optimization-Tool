@@ -13,7 +13,6 @@ public class FileReader {
 	private ParsedInput input;
 	private boolean isObject = false;
 	private boolean isRelation = false;
-	private boolean isTest = false;
 
 	public FileReader() {
 		this.input = new ParsedInput();
