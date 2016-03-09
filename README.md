@@ -15,7 +15,7 @@ Reads a text file containing a qualitative description of spatial obects and the
 
 ```java -jar opt-tool.jar -help```
 
-Arguments
+Parameters
 
     inputFile.txt               text file containing a qualitative description of spatial obects and their relations
     outputFile.txt              outputFile name
