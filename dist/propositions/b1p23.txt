@@ -1,0 +1,49 @@
+#Objects
+A point
+B point
+C point
+D point
+E point
+F point
+G point
+
+LAB line
+LCD line
+LCE line
+LDE line
+
+LAG line
+LFA line
+LFG line
+
+CC circle
+CA circle
+
+
+#Relations
+centre(C,CC)
+coincident(D,CC)
+coincident(E,CC)
+not_coincident(D,E)
+
+end_points(A,B,LAB)
+end_points(C,D,LCD)
+end_points(C,E,LCE)
+end_points(D,E,LDE)
+
+coincident(G,LAB)
+
+centre(A,CA)
+coincident(F,CA)
+coincident(G,CA)
+
+end_points(A,G,LAG)
+end_points(F,A,LFA)
+end_points(F,G,LFG)
+
+length_equal(LCD,LFA)
+length_equal(LCE,LAG)
+length_equal(LDE,LFG)
+
+
+

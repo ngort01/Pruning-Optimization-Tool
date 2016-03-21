@@ -1,21 +1,7 @@
 #Objects
-
-c1 circle
-p1 point
-c2 circle
-p2 point
-c3 circle
-p3 point
-
-x point
-y point
-z point
+o0 point
+o1 line
 
 #Relations
-centre(x,c1)
-centre(y,c2)
-centre(z,c3)
-coincident(p1, c1)
-coincident(p2, c2)
-coincident(p3, c3)
+right_of(o0,o1)
 

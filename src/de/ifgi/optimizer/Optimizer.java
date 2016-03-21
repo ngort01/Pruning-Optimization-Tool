@@ -10,6 +10,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import org.jgrapht.graph.SimpleWeightedGraph;
 import org.jgrapht.graph.Subgraph;
@@ -53,6 +54,7 @@ public class Optimizer {
 
 		int subIndex = 1;
 		for (Subgraph subGraph : decomposition) {
+			Set vSet = subGraph.vertexSet();
 			// choose points for grounding depending on vertex score and relation type
 			ArrayList<Geometry> chosenObjects = chooseObjects(subGraph);
 			
@@ -61,7 +63,7 @@ public class Optimizer {
 			
 			// add subgraph objects to output
 			String objects = "OBJECTS ";
-			for (Object o : subGraph.vertexSet()) {
+			for (Object o : vSet) {
 				Geometry g = (Geometry) o;
 				objects += g.getName() + " ";
 			}
@@ -70,7 +72,7 @@ public class Optimizer {
 			for (Relation e : removedEdges) {
 				Geometry v1 = (Geometry)e.getV1();
 				Geometry v2 = (Geometry)e.getV2();
-				if (subGraph.vertexSet().contains(v1) || subGraph.vertexSet().contains(v2)) {
+				if ((vSet.contains(v1) && !vSet.contains(v2)) || (!vSet.contains(v1) && vSet.contains(v2))) {
 					output.add("DELETED " + e.getType() + " " + v1.getName() + " " + v2.getName() + osNewLine);
 				}
 			}

@@ -1,0 +1,35 @@
+#Objects
+
+PA point
+PB point
+PC point
+PD point
+PE point
+PF point
+
+LAD line
+LBC line
+LEF line
+LEA line
+LDC line
+LED line
+LAC line
+
+#Relations
+
+end_points(PA, PD, LAD)
+end_points(PB, PC, LBC)
+end_points(PE, PF, LEF)
+end_points(PE, PA, LEA)
+end_points(PD, PC, LDC)
+end_points(PE, PD, LED)
+end_points(PA, PC, LAC)
+
+right_of(PE, LAD)
+right_of(PB, LAD)
+
+coincident(PA, LEF)
+coincident(PD, LBC)
+
+length_equal(LEA, LDC)
+length_equal(LED, LAC)

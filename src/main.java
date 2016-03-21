@@ -43,7 +43,7 @@ public class main {
 		}
 		
 		FileReader reader = new FileReader();
-		//ParsedInput input = reader.readFile("./dist/propositions/b1p22.txt");
+		//ParsedInput input = reader.readFile("./dist/propositions/b1p23.txt");
 		ParsedInput input = reader.readFile(args[0]);
 		input.calcScores(customWeights);
 		//Optimizer optimizer = new Optimizer(input, "test.txt");
